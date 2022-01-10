@@ -1,0 +1,15 @@
+[package]
+name = "envoy-control-plane"
+version = "0.1.0"
+license = "Apache-2.0"
+edition = "2021"
+build = "build.rs"
+description = "Envoy xDS v3 APIs"
+repository = "https://github.com/bpowers/rust-envoy-control-plane"
+
+[dependencies]
+prost = "0.9"
+prost-types = "0.9"
+
+[build-dependencies]
+prost-build = "0.9"
