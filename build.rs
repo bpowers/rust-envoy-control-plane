@@ -4,7 +4,10 @@
 
 use std::io::Result;
 fn main() -> Result<()> {
-    prost_build::compile_protos(&[
+    tonic_build::configure()
+        .build_server(true)
+        .build_client(true)
+        .compile(&[
         "data-plane-api/envoy/admin/v3/certs.proto",
         "data-plane-api/envoy/admin/v3/clusters.proto",
         "data-plane-api/envoy/admin/v3/config_dump.proto",

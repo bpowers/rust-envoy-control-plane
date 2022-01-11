@@ -1,6 +1,6 @@
 [package]
 name = "envoy-control-plane"
-version = "0.1.0"
+version = "0.2.0"
 license = "Apache-2.0"
 edition = "2021"
 build = "build.rs"
@@ -10,6 +10,12 @@ repository = "https://github.com/bpowers/rust-envoy-control-plane"
 [dependencies]
 prost = "0.9"
 prost-types = "0.9"
+tonic = { version = "0.6", default-features = false, optional = true }
 
 [build-dependencies]
 prost-build = "0.9"
+tonic-build = "0.6"
+
+[features]
+grpc = ["tonic/async-trait", "tonic/codegen", "tonic/prost", "tonic/transport"]
+default = ["grpc"]
