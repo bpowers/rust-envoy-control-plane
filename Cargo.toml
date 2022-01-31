@@ -1,6 +1,6 @@
 [package]
 name = "envoy-control-plane"
-version = "0.3.0"
+version = "0.3.1"
 license = "Apache-2.0"
 edition = "2021"
 build = "build.rs"
@@ -9,18 +9,19 @@ repository = "https://github.com/bpowers/rust-envoy-control-plane"
 
 [dependencies]
 prost = "0.9"
-prost-types = "0.9"
+prost-wkt-types = { version = "0.3", optional = true }
 tonic = { version = "0.6", default-features = false, optional = true }
-pbjson = { version = "0.2", git = "https://github.com/bpowers/pbjson", rev = "a362f9ab4240ee42f011fe6c471d65a70eedc1fc", optional = true }
-pbjson-types = { version = "0.2", git = "https://github.com/bpowers/pbjson", rev = "a362f9ab4240ee42f011fe6c471d65a70eedc1fc", optional = true }
-serde = { version = "1", optional = true }
+pbjson = { version = "0.2", git = "https://github.com/bpowers/pbjson", rev = "098d3010ead4aa04924f77220803883ca8f5b991", optional = true }
+pbjson-types = { version = "0.2", git = "https://github.com/bpowers/pbjson", rev = "098d3010ead4aa04924f77220803883ca8f5b991", optional = true }
+serde = { version = "1", features = ["derive"], optional = true }
+typetag = { version = "0.1", optional = true }
 
 [build-dependencies]
 prost-build = "0.9"
 tonic-build = { version = "0.6", optional = true }
-pbjson-build = { version = "0.2", git = "https://github.com/bpowers/pbjson", rev = "a362f9ab4240ee42f011fe6c471d65a70eedc1fc", optional = true }
+pbjson-build = { version = "0.2", git = "https://github.com/bpowers/pbjson", rev = "098d3010ead4aa04924f77220803883ca8f5b991", optional = true }
 
 [features]
 grpc = ["tonic/async-trait", "tonic/codegen", "tonic/prost", "tonic/transport", "tonic-build"]
-json = ["pbjson", "pbjson-build", "pbjson-types", "serde"]
+json = ["pbjson", "pbjson-build", "pbjson-types", "prost-wkt-types", "serde", "typetag"]
 default = ["grpc", "json"]

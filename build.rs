@@ -14,7 +14,9 @@ fn main() -> Result<()> {
         .build_client(true)
         .file_descriptor_set_path(descriptor_path.clone())
         .compile_well_known_types(true)
+        .extern_path(".google.protobuf.Any", "::prost_wkt_types::Any")
         .extern_path(".google.protobuf", "::pbjson_types")
+        .format(false) // 50% faster builds by disabling rustfmt
         .compile(
             &[
                 "data-plane-api/envoy/admin/v3/certs.proto",
@@ -259,17 +261,7 @@ fn main() -> Result<()> {
                 "data-plane-api/envoy/service/status/v3/csds.proto",
                 "data-plane-api/envoy/service/tap/v3/tap.proto",
                 "data-plane-api/envoy/service/trace/v3/trace_service.proto",
-                "data-plane-api/envoy/type/hash_policy.proto",
-                "data-plane-api/envoy/type/http.proto",
                 "data-plane-api/envoy/type/http/v3/path_transformation.proto",
-                "data-plane-api/envoy/type/http_status.proto",
-                "data-plane-api/envoy/type/matcher/metadata.proto",
-                "data-plane-api/envoy/type/matcher/node.proto",
-                "data-plane-api/envoy/type/matcher/number.proto",
-                "data-plane-api/envoy/type/matcher/path.proto",
-                "data-plane-api/envoy/type/matcher/regex.proto",
-                "data-plane-api/envoy/type/matcher/string.proto",
-                "data-plane-api/envoy/type/matcher/struct.proto",
                 "data-plane-api/envoy/type/matcher/v3/http_inputs.proto",
                 "data-plane-api/envoy/type/matcher/v3/metadata.proto",
                 "data-plane-api/envoy/type/matcher/v3/node.proto",
@@ -279,12 +271,7 @@ fn main() -> Result<()> {
                 "data-plane-api/envoy/type/matcher/v3/string.proto",
                 "data-plane-api/envoy/type/matcher/v3/struct.proto",
                 "data-plane-api/envoy/type/matcher/v3/value.proto",
-                "data-plane-api/envoy/type/matcher/value.proto",
                 "data-plane-api/envoy/type/metadata/v3/metadata.proto",
-                "data-plane-api/envoy/type/percent.proto",
-                "data-plane-api/envoy/type/range.proto",
-                "data-plane-api/envoy/type/semantic_version.proto",
-                "data-plane-api/envoy/type/token_bucket.proto",
                 "data-plane-api/envoy/type/tracing/v3/custom_tag.proto",
                 "data-plane-api/envoy/type/v3/hash_policy.proto",
                 "data-plane-api/envoy/type/v3/http.proto",

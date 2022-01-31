@@ -2,8 +2,9 @@
 // Use of this source code is governed by the Apache License,
 // Version 2.0, that can be found in the LICENSE file.
 
+pub use pbjson_types;
 pub use prost;
-pub use prost_types;
+pub use prost_wkt_types;
 
 // list of files generated with:
 // $ find target/debug/build/rust-control-plane-4a01c79a4c642ce5/out -name '*.rs' | sort | while read f; do echo "pub mod $(basename $f | perl -lpe '$_=substr($_,0,-3) if eof') { include!(concat!(env!(""OUT_DIR""), \"$(basename $f)\")); }"; done | pbcopy
