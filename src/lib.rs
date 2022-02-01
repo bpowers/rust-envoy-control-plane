@@ -1318,3 +1318,181 @@ pub mod xds {
         }
     }
 }
+
+#[test]
+fn test_any_json_roundtrip() {
+    use crate::envoy::config::bootstrap::v3::bootstrap::StaticResources;
+    use crate::envoy::config::bootstrap::v3::Bootstrap;
+    use crate::envoy::config::core::v3::address;
+    use crate::envoy::config::core::v3::data_source::Specifier;
+    use crate::envoy::config::core::v3::socket_address::PortSpecifier;
+    use crate::envoy::config::core::v3::transport_socket::ConfigType;
+    use crate::envoy::config::core::v3::{Address, DataSource, SocketAddress, TransportSocket};
+    use crate::envoy::config::listener::v3::{FilterChain, Listener};
+    use crate::envoy::extensions::transport_sockets::tls::v3::common_tls_context::ValidationContextType;
+    use crate::envoy::extensions::transport_sockets::tls::v3::subject_alt_name_matcher::SanType;
+    use crate::envoy::extensions::transport_sockets::tls::v3::tls_parameters::TlsProtocol;
+    use crate::envoy::extensions::transport_sockets::tls::v3::{CertificateValidationContext, SubjectAltNameMatcher};
+    use crate::envoy::extensions::transport_sockets::tls::v3::{CommonTlsContext, DownstreamTlsContext, TlsCertificate, TlsParameters};
+    use crate::envoy::r#type::matcher::v3::string_matcher::MatchPattern;
+    use crate::envoy::r#type::matcher::v3::StringMatcher;
+    use crate::pbjson_types::BoolValue;
+    use crate::prost_wkt_types::Any;
+
+    const BOOTSTRAP_JSON: &str = r#"{
+  "staticResources": {
+    "listeners": [
+      {
+        "name": "server-1",
+        "address": {
+          "socketAddress": {
+            "address": "127.0.0.1",
+            "portValue": 9000
+          }
+        },
+        "filterChains": [
+          {
+            "filters": [],
+            "transportSocket": {
+              "name": "envoy.transport_sockets.tls",
+              "typedConfig": {
+                "@type": "type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext",
+                "requireClientCertificate": { "value": true },
+                "commonTlsContext": {
+                  "tlsParams": {
+                    "tlsMinimumProtocolVersion": "TLSv1_3",
+                    "tlsMaximumProtocolVersion": "TLSv1_3"
+                  },
+                  "validationContext": {
+                    "trustedCa": {
+                      "filename": "./certs/ca.crt"
+                    },
+                    "matchTypedSubjectAltNames": [
+                      {
+                        "sanType": "DNS",
+                        "matcher": {
+                          "exact": "client.test"
+                        }
+                      }
+                    ]
+                  },
+                  "tlsCertificates": [
+                    {
+                      "certificateChain": {
+                        "filename": "./certs/server.test.ecdsa-p256.crt"
+                      },
+                      "privateKey": {
+                        "filename": "./certs/server.test.ecdsa-p256.key"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+    "#;
+
+    let expected_tls_context = DownstreamTlsContext {
+        require_client_certificate: Some(BoolValue { value: true }),
+        common_tls_context: Some(CommonTlsContext {
+            tls_params: Some(TlsParameters {
+                tls_minimum_protocol_version: TlsProtocol::TlSv13 as i32,
+                tls_maximum_protocol_version: TlsProtocol::TlSv13 as i32,
+                ..Default::default()
+            }),
+            validation_context_type: Some(ValidationContextType::ValidationContext(CertificateValidationContext {
+                trusted_ca: Some(DataSource {
+                    specifier: Some(Specifier::Filename("./certs/ca.crt".to_string())),
+                }),
+                match_typed_subject_alt_names: vec![SubjectAltNameMatcher {
+                    san_type: SanType::Dns as i32,
+                    matcher: Some(StringMatcher {
+                        ignore_case: false,
+                        match_pattern: Some(MatchPattern::Exact("client.test".to_string())),
+                    }),
+                }],
+                ..Default::default()
+            })),
+            tls_certificates: vec![TlsCertificate {
+                certificate_chain: Some(DataSource {
+                    specifier: Some(Specifier::Filename("./certs/server.test.ecdsa-p256.crt".to_string())),
+                }),
+                private_key: Some(DataSource {
+                    specifier: Some(Specifier::Filename("./certs/server.test.ecdsa-p256.key".to_string())),
+                }),
+                ..Default::default()
+            }],
+            ..Default::default()
+        }),
+        ..Default::default()
+    };
+
+    let bootstrap: Bootstrap = serde_json::from_str(BOOTSTRAP_JSON).unwrap();
+    let expected = Bootstrap {
+        static_resources: Some(StaticResources {
+            listeners: vec![Listener {
+                name: "server-1".to_string(),
+                address: Some(Address {
+                    address: Some(address::Address::SocketAddress(SocketAddress {
+                        address: "127.0.0.1".to_string(),
+                        port_specifier: Some(PortSpecifier::PortValue(9000)),
+                        ..Default::default()
+                    })),
+                }),
+                filter_chains: vec![FilterChain {
+                    filters: vec![],
+                    transport_socket: Some(TransportSocket {
+                        name: "envoy.transport_sockets.tls".to_string(),
+                        config_type: Some(ConfigType::TypedConfig(Any::try_pack(expected_tls_context.clone()).unwrap())),
+                    }),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            }],
+            ..Default::default()
+        }),
+        ..Default::default()
+    };
+
+    use pbjson::prost_wkt::MessageSerde;
+    use prost::Message;
+
+    let downstream_tls_context_type_url = DownstreamTlsContext::default().type_url();
+
+    let expected_tls_any = expected.static_resources.as_ref().unwrap().listeners[0].filter_chains[0]
+        .transport_socket
+        .as_ref()
+        .unwrap()
+        .config_type
+        .as_ref()
+        .unwrap();
+    let ConfigType::TypedConfig(tls_any) = expected_tls_any;
+    if &tls_any.type_url == downstream_tls_context_type_url {
+        let ctx = DownstreamTlsContext::decode(&*tls_any.value).unwrap();
+        assert_eq!(&expected_tls_context, &ctx);
+    } else {
+        panic!("unknown envoy.transport_sockets.tls typed config: {}", &tls_any.type_url);
+    }
+
+    let bootstrap_tls_any = bootstrap.static_resources.as_ref().unwrap().listeners[0].filter_chains[0]
+        .transport_socket
+        .as_ref()
+        .unwrap()
+        .config_type
+        .as_ref()
+        .unwrap();
+    let ConfigType::TypedConfig(tls_any) = bootstrap_tls_any;
+    if &tls_any.type_url == downstream_tls_context_type_url {
+        let ctx = DownstreamTlsContext::decode(&*tls_any.value).unwrap();
+        assert_eq!(&expected_tls_context, &ctx);
+    } else {
+        panic!("unknown envoy.transport_sockets.tls typed config: {}", &tls_any.type_url);
+    }
+
+    assert_eq!(expected, bootstrap);
+}
