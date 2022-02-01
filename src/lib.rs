@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache License,
 // Version 2.0, that can be found in the LICENSE file.
 
-pub use pbjson_types;
+pub use pbjson_types_any;
 pub use prost;
 pub use prost_wkt_types;
 
@@ -1336,7 +1336,7 @@ fn test_any_json_roundtrip() {
     use crate::envoy::extensions::transport_sockets::tls::v3::{CommonTlsContext, DownstreamTlsContext, TlsCertificate, TlsParameters};
     use crate::envoy::r#type::matcher::v3::string_matcher::MatchPattern;
     use crate::envoy::r#type::matcher::v3::StringMatcher;
-    use crate::pbjson_types::BoolValue;
+    use crate::pbjson_types_any::BoolValue;
     use crate::prost_wkt_types::Any;
 
     const BOOTSTRAP_JSON: &str = r#"{
@@ -1459,7 +1459,7 @@ fn test_any_json_roundtrip() {
         ..Default::default()
     };
 
-    use pbjson::prost_wkt::MessageSerde;
+    use pbjson_any::prost_wkt::MessageSerde;
     use prost::Message;
 
     let downstream_tls_context_type_url = DownstreamTlsContext::default().type_url();
