@@ -15,8 +15,7 @@ fn main() -> Result<()> {
         .file_descriptor_set_path(descriptor_path.clone())
         .compile_well_known_types(true)
         .extern_path(".google.protobuf.Any", "::prost_wkt_types::Any")
-        .extern_path(".google.protobuf", "::pbjson_types_any")
-        .format(false) // 50% faster builds by disabling rustfmt
+        .extern_path(".google.protobuf", "::pbjson_types")
         .compile(
             &[
                 "data-plane-api/envoy/admin/v3/certs.proto",
@@ -295,18 +294,21 @@ fn main() -> Result<()> {
         )?;
 
     let descriptor_set = std::fs::read(descriptor_path)?;
-    pbjson_build_any::Builder::new().register_descriptors(&descriptor_set)?.build(&[
-        ".envoy",
-        ".xds",
-        // ".google.api",
-        // ".google.protobuf",
-        // ".google.rpc",
-        ".io.prometheus",
-        ".opencensus",
-        ".opentelemetry",
-        ".udpa",
-        ".validate",
-    ])?;
+    pbjson_build::Builder::new()
+        .register_descriptors(&descriptor_set)?
+        .extern_path(".google.protobuf", "::pbjson_types")
+        .build(&[
+            ".envoy",
+            ".xds",
+            ".google.api",
+            // ".google.protobuf",
+            ".google.rpc",
+            ".io.prometheus",
+            ".opencensus",
+            ".opentelemetry",
+            ".udpa",
+            ".validate",
+        ])?;
 
     Ok(())
 }
