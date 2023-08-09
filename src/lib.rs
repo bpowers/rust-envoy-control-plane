@@ -2,7 +2,7 @@
 // Use of this source code is governed by the Apache License,
 // Version 2.0, that can be found in the LICENSE file.
 
-pub use pbjson_types_any;
+pub use pbjson_types;
 pub use prost;
 pub use prost_wkt_types;
 
@@ -1083,30 +1083,30 @@ pub mod envoy {
         pub mod http {
             pub mod v3 {
                 include!(concat!(env!("OUT_DIR"), "/envoy.r#type.http.v3.rs"));
-                include!(concat!(env!("OUT_DIR"), "/envoy.type.http.v3.serde.rs"));
+                include!(concat!(env!("OUT_DIR"), "/envoy.r#type.http.v3.serde.rs"));
             }
         }
         pub mod matcher {
             pub mod v3 {
                 include!(concat!(env!("OUT_DIR"), "/envoy.r#type.matcher.v3.rs"));
-                include!(concat!(env!("OUT_DIR"), "/envoy.type.matcher.v3.serde.rs"));
+                include!(concat!(env!("OUT_DIR"), "/envoy.r#type.matcher.v3.serde.rs"));
             }
         }
         pub mod metadata {
             pub mod v3 {
                 include!(concat!(env!("OUT_DIR"), "/envoy.r#type.metadata.v3.rs"));
-                include!(concat!(env!("OUT_DIR"), "/envoy.type.metadata.v3.serde.rs"));
+                include!(concat!(env!("OUT_DIR"), "/envoy.r#type.metadata.v3.serde.rs"));
             }
         }
         pub mod tracing {
             pub mod v3 {
                 include!(concat!(env!("OUT_DIR"), "/envoy.r#type.tracing.v3.rs"));
-                include!(concat!(env!("OUT_DIR"), "/envoy.type.tracing.v3.serde.rs"));
+                include!(concat!(env!("OUT_DIR"), "/envoy.r#type.tracing.v3.serde.rs"));
             }
         }
         pub mod v3 {
             include!(concat!(env!("OUT_DIR"), "/envoy.r#type.v3.rs"));
-            include!(concat!(env!("OUT_DIR"), "/envoy.type.v3.serde.rs"));
+            include!(concat!(env!("OUT_DIR"), "/envoy.r#type.v3.serde.rs"));
         }
     }
     pub mod service {
@@ -1237,19 +1237,19 @@ pub mod google {
         pub mod expr {
             pub mod v1alpha1 {
                 include!(concat!(env!("OUT_DIR"), "/google.api.expr.v1alpha1.rs"));
-                // include!(concat!(env!("OUT_DIR"), "/google.api.expr.v1alpha1.serde.rs"));
+                include!(concat!(env!("OUT_DIR"), "/google.api.expr.v1alpha1.serde.rs"));
             }
         }
-        include!(concat!(env!("OUT_DIR"), "/google.api.rs"));
+        // include!(concat!(env!("OUT_DIR"), "/google.api.rs"));
         // include!(concat!(env!("OUT_DIR"), "/google.api.serde.rs"));
     }
     pub mod protobuf {
-        include!(concat!(env!("OUT_DIR"), "/google.protobuf.rs"));
+        // include!(concat!(env!("OUT_DIR"), "/google.protobuf.rs"));
         // include!(concat!(env!("OUT_DIR"), "/google.protobuf.serde.rs"));
     }
     pub mod rpc {
         include!(concat!(env!("OUT_DIR"), "/google.rpc.rs"));
-        // include!(concat!(env!("OUT_DIR"), "/google.rpc.serde.rs"));
+        include!(concat!(env!("OUT_DIR"), "/google.rpc.serde.rs"));
     }
 }
 pub mod io {
@@ -1313,7 +1313,7 @@ pub mod xds {
         pub mod matcher {
             pub mod v3 {
                 include!(concat!(env!("OUT_DIR"), "/xds.r#type.matcher.v3.rs"));
-                include!(concat!(env!("OUT_DIR"), "/xds.type.matcher.v3.serde.rs"));
+                include!(concat!(env!("OUT_DIR"), "/xds.r#type.matcher.v3.serde.rs"));
             }
         }
     }
