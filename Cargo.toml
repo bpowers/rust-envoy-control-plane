@@ -8,18 +8,18 @@ description = "Envoy xDS v3 APIs"
 repository = "https://github.com/bpowers/rust-envoy-control-plane"
 
 [dependencies]
-prost = "^0.11"
-prost-wkt-types = { version = "^0.4", optional = true }
-tonic = { version = "^0.9", default-features = false, optional = true }
-pbjson = { version = "^0.5", optional = true }
-pbjson-types = { version = "^0.5", optional = true }
+prost = "^0.12"
+prost-wkt-types = { version = "^0.5", optional = true }
+tonic = { version = "^0.11", default-features = false, optional = true }
+pbjson = { version = "^0.6", optional = true }
+pbjson-types = { version = "^0.6", optional = true }
 serde = { version = "^1", features = ["derive"], optional = true }
 typetag = { version = "^0.2", optional = true }
 
 [build-dependencies]
-prost-build = "^0.11"
-tonic-build = { version = "^0.9", optional = true }
-pbjson-build = { version = "^0.5", optional = true }
+prost-build = "^0.12"
+tonic-build = { version = "^0.11", optional = true }
+pbjson-build = { version = "^0.6", optional = true }
 
 [dev-dependencies]
 serde_json = "1"
@@ -28,7 +28,3 @@ serde_json = "1"
 grpc = ["tonic/codegen", "tonic/prost", "tonic/transport", "tonic-build"]
 json = ["pbjson", "pbjson-build", "pbjson-types", "prost-wkt-types", "serde", "typetag"]
 default = ["grpc", "json"]
-
-[patch.crates-io]
-pbjson = { git = "https://github.com/kaizensparc/pbjson", branch = "fix-envoy" }
-pbjson-build = { git = "https://github.com/kaizensparc/pbjson", branch = "fix-envoy" }
