@@ -293,6 +293,13 @@ fn main() -> Result<()> {
             ],
         )?;
 
+        build_pbjson(descriptor_path)?;
+
+    Ok(())
+}
+
+#[cfg(feature = "json")]
+fn build_pbjson(descriptor_path: PathBuf) -> Result<()> {
     let descriptor_set = std::fs::read(descriptor_path)?;
     pbjson_build::Builder::new()
         .register_descriptors(&descriptor_set)?
@@ -309,6 +316,8 @@ fn main() -> Result<()> {
             ".udpa",
             ".validate",
         ])?;
-
     Ok(())
 }
+
+#[cfg(not(feature = "json"))]
+fn build_pbjson(_: PathBuf) -> Result<()> { Ok(()) }

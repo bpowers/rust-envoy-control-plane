@@ -25,7 +25,7 @@ pbjson-build = { version = "^0.5", optional = true }
 serde_json = "1"
 
 [features]
-grpc = ["tonic/codegen", "tonic/prost", "tonic/transport", "tonic-build"]
+grpc = ["tonic/codegen", "tonic/prost", "tonic/transport", "tonic-build", "pbjson-types", "prost-wkt-types"]
 json = ["pbjson", "pbjson-build", "pbjson-types", "prost-wkt-types", "serde", "typetag"]
 default = ["grpc", "json"]
 
